@@ -8,7 +8,7 @@ edition = "2018"
 
 [dependencies]
 anyhow = "1.0.40"
-clap = "2.33.3"
+clap = "3.0.0-beta.2"
 colored = "2.0.0"
 dirs = "3.0.1"
 log = "0.4.14"
@@ -17,3 +17,4 @@ serde = { version = "1.0.125", features = ["derive"] }
 serde_json = "1.0.64"
 simplelog = "0.10.0"
 thiserror = "1.0.24"
+toml = "0.5.8"
