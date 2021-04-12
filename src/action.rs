@@ -25,7 +25,7 @@ fn list() -> anyhow::Result<()> {
     let dir = fs::read_dir(working_dir).verbose()?;
     for item in dir {
         let item = item?;
-        println!("{}", item.file_name().to_string_lossy());
+        println!("{}", item.path().file_stem().expect("root file").to_string_lossy());
     }
     Ok(())
 }
