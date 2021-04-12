@@ -7,27 +7,46 @@ pub fn section(section: &str) {
     if !vv() {
         return;
     }
-    println!("{} {}", "::<>".cyan(), section.black());
+    println!("{} {}", "::<>".cyan(), section);
 }
 
-pub fn info(title: String) {
-    print!("  {}...", title.bright_black());
+pub fn info<T>(title: T)
+where
+    T: AsRef<str>,
+{
+    print!("  {}...", title.as_ref().bright_black());
     io::stdout().flush().ok();
 }
 
-pub fn verbose(title: String) {
+pub fn verbose<T>(title: T)
+where
+    T: AsRef<str>,
+{
     if vv() {
-        print!("  {}...", title.bright_black());
+        print!("  {}...", title.as_ref().bright_black());
         io::stdout().flush().ok();
+    }
+}
+
+pub fn vline<T>(line: T)
+where
+    T: AsRef<str>,
+{
+    if vv() {
+        println!("  {}", line.as_ref());
     }
 }
 
 pub trait Check {
     fn check(self) -> Self;
     fn verbose(self) -> Self;
+    fn print_err(self) -> Self;
 }
 
-impl<A, B> Check for Result<A, B> {
+impl<A, E> Check for Result<A, E>
+where
+    E: std::fmt::Display,
+{
     fn check(self) -> Self {
         if self.is_ok() {
             println!("{}", "OK".green())
@@ -43,6 +62,16 @@ impl<A, B> Check for Result<A, B> {
                 println!("{}", "OK".green());
             } else {
                 println!("{}", "Failed".red());
+            }
+        }
+        self
+    }
+
+    fn print_err(self) -> Self {
+        match self {
+            Ok(_) => {}
+            Err(ref err) => {
+                println!("{}: {}", "Error".red(), err);
             }
         }
         self

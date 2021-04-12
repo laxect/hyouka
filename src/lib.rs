@@ -1,19 +1,22 @@
-#![feature(once_cell)]
+#![feature(once_cell, with_options)]
 use clap::Clap;
 
+pub use action::take_action;
 pub use config::load_config;
 pub(crate) use config::{target_dir, working_dir};
-pub(crate) use flags::{set_vv, vv};
+pub(crate) use flags::vv;
+pub use print::Check;
 
-pub mod print;
+mod action;
 mod config;
+mod print;
 mod flags {
     use std::lazy::SyncOnceCell;
 
     /// global flag which can only set once.
     static VV: SyncOnceCell<bool> = SyncOnceCell::new();
 
-    pub fn set_vv(val: bool) {
+    pub(crate) fn set_vv(val: bool) {
         VV.set(val).expect("Set twice");
     }
 
@@ -23,7 +26,7 @@ mod flags {
 }
 
 #[derive(Clap, Debug)]
-pub struct Opts {
+struct Opts {
     /// show verbose message
     #[clap(short, long)]
     pub verbose: bool,
@@ -38,5 +41,15 @@ pub enum Action {
     /// create a new draft.
     New { name: String },
     /// post a draft.
-    Post { name: String },
+    Post {
+        name: String,
+        #[clap(short, long)]
+        update: bool,
+    },
+}
+
+pub fn parse_opts() -> anyhow::Result<Action> {
+    let Opts { verbose, action } = Opts::parse();
+    flags::set_vv(verbose);
+    Ok(action)
 }

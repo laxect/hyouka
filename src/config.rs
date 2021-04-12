@@ -22,16 +22,16 @@ pub fn load_config() -> anyhow::Result<()> {
     let config_path = config_dir()
         .expect("No XDG_CONFIG_DIR setted")
         .join("hyouka")
-        .join("config.yml");
+        .join("config.toml");
     verbose(format!(
         "load config from default path {}",
-        config_path.as_os_str().to_string_lossy()
+        config_path.to_string_lossy()
     ));
     let mut config = std::fs::File::open(config_path).verbose()?;
     let mut content = Vec::new();
-    verbose("read file content".into());
+    verbose("read file content");
     config.read_to_end(&mut content).verbose()?;
-    verbose("parse config".into());
+    verbose("parse config");
     let Config {
         target_dir,
         working_dir,
