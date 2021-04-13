@@ -10,12 +10,11 @@ pub fn section(section: &str) {
     println!("{} {}", "::<>".cyan(), section);
 }
 
-pub fn info<T>(title: T)
+pub fn error<T>(err: T)
 where
     T: AsRef<str>,
 {
-    print!("  {}...", title.as_ref().bright_black());
-    io::stdout().flush().ok();
+    println!("  {}", err.as_ref().bright_red());
 }
 
 pub fn verbose<T>(title: T)
@@ -38,7 +37,6 @@ where
 }
 
 pub trait Check {
-    fn check(self) -> Self;
     fn verbose(self) -> Self;
     fn print_err(self) -> Self;
 }
@@ -47,15 +45,6 @@ impl<A, E> Check for Result<A, E>
 where
     E: std::fmt::Display,
 {
-    fn check(self) -> Self {
-        if self.is_ok() {
-            println!("{}", "OK".green())
-        } else {
-            println!("{}", "Failed".red())
-        }
-        self
-    }
-
     fn verbose(self) -> Self {
         if vv() {
             if self.is_ok() {
