@@ -10,13 +10,6 @@ pub fn section(section: &str) {
     println!("{} {}", "::<>".cyan(), section);
 }
 
-pub fn error<T>(err: T)
-where
-    T: AsRef<str>,
-{
-    println!("  {}", err.as_ref().bright_red());
-}
-
 pub fn verbose<T>(title: T)
 where
     T: AsRef<str>,

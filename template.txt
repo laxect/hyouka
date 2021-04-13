@@ -1,7 +1,7 @@
 ---
-title: 
-category: 
+title:
+category:
 tags: []
-summary: 
-date: 
+summary:
+date:
 ---
