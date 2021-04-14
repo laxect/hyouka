@@ -11,17 +11,17 @@ mod action;
 mod config;
 mod print;
 mod flags {
-    use std::lazy::SyncOnceCell;
+    use std::sync::atomic::{AtomicBool, Ordering};
 
     /// global flag which can only set once.
-    static VV: SyncOnceCell<bool> = SyncOnceCell::new();
+    static VV: AtomicBool = AtomicBool::new(false);
 
     pub(crate) fn set_vv(val: bool) {
-        VV.set(val).expect("Set twice");
+        VV.store(val, Ordering::SeqCst);
     }
 
     pub fn vv() -> bool {
-        *VV.get().expect("Use before inital")
+        VV.load(Ordering::Relaxed)
     }
 }
 
