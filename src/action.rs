@@ -1,5 +1,4 @@
 use crate::{print, print::Check, target_dir, working_dir, Action};
-use chrono::Datelike;
 use koyomi::Date;
 use std::{fs, io::Write};
 
@@ -71,7 +70,7 @@ fn post(name: String, update: bool) -> anyhow::Result<()> {
     let origin_content = fs::read_to_string(origin_path).verbose()?;
     let koyomi_content: String = origin_content.replacen(
         "\ndate:",
-        format!("\ndate: {}", koyomi_day(chrono::Local::now().date())).as_str(),
+        format!("\ndate: {}", koyomi_day(chrono::Local::today().naive_local())).as_str(),
         1,
     );
     print::verbose(format!("post to {}", &target_name));
@@ -83,8 +82,8 @@ fn today() -> String {
     chrono::Local::now().format("%Y-%m-%d").to_string()
 }
 
-fn koyomi_day<T: chrono::TimeZone>(now: chrono::Date<T>) -> String {
-    let date = Date::from_ymd(now.year(), now.month(), now.day()).expect("Hello John Titor");
+fn koyomi_day(now: chrono::NaiveDate) -> String {
+    let date = Date::from(now);
     format!(
         "{}{}月{}日",
         date.era().expect("Hello John").format(),
@@ -96,11 +95,10 @@ fn koyomi_day<T: chrono::TimeZone>(now: chrono::Date<T>) -> String {
 #[cfg(test)]
 mod test {
     use super::koyomi_day;
-    use chrono::TimeZone;
 
     #[test]
     fn today_test() {
-        let day = chrono::Utc.ymd(2018, 1, 1);
+        let day = chrono::NaiveDate::from_ymd(2018, 1, 1);
         let day = koyomi_day(day);
         assert_eq!("平成30年1月1日", day);
     }
