@@ -1,4 +1,4 @@
-use crate::{print, print::Check, target_dir, working_dir, Action};
+use crate::{line, print, print::Check, target_dir, verbose, working_dir, Action};
 use koyomi::Date;
 use std::{fs, io::Write};
 
@@ -24,8 +24,8 @@ pub fn take_action(action: Action) -> anyhow::Result<()> {
 
 fn list() -> anyhow::Result<()> {
     let working_dir = working_dir();
-    print::vline(format!("working dir: {}", working_dir.to_string_lossy()));
-    print::verbose("scan dir");
+    line!("working dir: {}", working_dir.to_string_lossy());
+    verbose!("scan dir");
     let dir = fs::read_dir(working_dir).verbose()?;
     for item in dir {
         let item = item?;
@@ -36,9 +36,9 @@ fn list() -> anyhow::Result<()> {
 
 fn new(mut name: String) -> anyhow::Result<()> {
     let working_dir = working_dir();
-    print::vline(format!("working dir: {}", working_dir.to_string_lossy()));
+    line!("working dir: {}", working_dir.to_string_lossy());
     name.push_str(".md");
-    print::verbose(format!("create file {}", &name));
+    verbose!("create file {}", &name);
     let path = working_dir.join(name);
     let mut file = fs::File::with_options()
         .create_new(true)
@@ -51,29 +51,29 @@ fn new(mut name: String) -> anyhow::Result<()> {
 
 fn post(name: String, update: bool) -> anyhow::Result<()> {
     let working_dir = working_dir();
-    print::vline(format!("working dir: {}", working_dir.to_string_lossy()));
+    line!("working dir: {}", working_dir.to_string_lossy());
     let target_dir = target_dir();
-    print::vline(format!("target dir: {}", target_dir.to_string_lossy()));
+    line!("target dir: {}", target_dir.to_string_lossy());
     let origin_name = [&name, ".md"].concat();
     let origin_path = working_dir.join(&origin_name);
     let target_name = [&today(), "-", &origin_name].concat();
     let target_path = target_dir.join(&target_name);
     if target_path.exists() {
         if update {
-            print::verbose(format!("remove file {}", target_path.to_string_lossy()));
+            verbose!("remove file {}", target_path.to_string_lossy());
             fs::remove_file(&target_path).verbose()?;
         } else {
             return Err(anyhow::Error::msg("file exist! use --update or manual solve conflict."));
         }
     }
-    print::verbose(format!("read {}", &origin_name));
+    verbose!("read {}", &origin_name);
     let origin_content = fs::read_to_string(origin_path).verbose()?;
     let koyomi_content: String = origin_content.replacen(
         "\ndate:",
         format!("\ndate: {}", koyomi_day(chrono::Local::today().naive_local())).as_str(),
         1,
     );
-    print::verbose(format!("post to {}", &target_name));
+    verbose!("post to {}", &target_name);
     fs::write(&target_path, koyomi_content).verbose()?;
     Ok(())
 }

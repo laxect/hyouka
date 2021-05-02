@@ -6,7 +6,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use crate::print::*;
+use crate::{print::*, verbose};
 
 static TARGET_DIR: SyncOnceCell<PathBuf> = SyncOnceCell::new();
 static WORKING_DIR: SyncOnceCell<PathBuf> = SyncOnceCell::new();
@@ -23,15 +23,12 @@ pub fn load_config() -> anyhow::Result<()> {
         .expect("No XDG_CONFIG_DIR setted")
         .join("hyouka")
         .join("config.toml");
-    verbose(format!(
-        "load config from default path {}",
-        config_path.to_string_lossy()
-    ));
+    verbose!("load config from default path {}", config_path.to_string_lossy());
     let mut config = std::fs::File::open(config_path).verbose()?;
     let mut content = Vec::new();
-    verbose("read file content");
+    verbose!("read file content");
     config.read_to_end(&mut content).verbose()?;
-    verbose("parse config");
+    verbose!("parse config");
     let Config {
         target_dir,
         working_dir,

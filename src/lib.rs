@@ -9,6 +9,7 @@ pub use print::Check;
 
 mod action;
 mod config;
+#[macro_use]
 mod print;
 mod flags {
     use std::sync::atomic::{AtomicBool, Ordering};

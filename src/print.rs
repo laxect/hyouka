@@ -1,6 +1,30 @@
 use crate::vv;
 use colored::Colorize;
-use std::{io, io::Write};
+
+#[macro_export]
+macro_rules! line {
+    ($($arg:tt)+) => {
+        if $crate::vv() {
+            println!($($arg)+);
+        }
+    }
+}
+
+#[macro_export]
+macro_rules! verbose {
+    ($arg:expr) => {
+        if $crate::vv() {
+            print!("  {}...", colored::Colorize::bright_black($arg));
+            std::io::Write::flush(&mut std::io::stdout()).ok();
+        }
+    };
+    ($($arg:tt)+) => {
+        if $crate::vv() {
+            print!("  {}...", colored::Colorize::bright_black(format!($($arg)+).as_ref()));
+            std::io::Write::flush(&mut std::io::stdout()).ok();
+        }
+    }
+}
 
 pub fn section(section: &str) {
     // all section should output only when verbose
@@ -8,25 +32,6 @@ pub fn section(section: &str) {
         return;
     }
     println!("{} {}", "::<>".cyan(), section);
-}
-
-pub fn verbose<T>(title: T)
-where
-    T: AsRef<str>,
-{
-    if vv() {
-        print!("  {}...", title.as_ref().bright_black());
-        io::stdout().flush().ok();
-    }
-}
-
-pub fn vline<T>(line: T)
-where
-    T: AsRef<str>,
-{
-    if vv() {
-        println!("  {}", line.as_ref());
-    }
 }
 
 pub trait Check {
