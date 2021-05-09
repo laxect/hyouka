@@ -6,11 +6,13 @@ pub use config::load_config;
 pub(crate) use config::{target_dir, working_dir};
 pub(crate) use flags::vv;
 pub use print::Check;
+use options::{Action, Opts};
 
 mod action;
 mod config;
 #[macro_use]
 mod print;
+mod options;
 mod flags {
     use std::sync::atomic::{AtomicBool, Ordering};
 
@@ -24,29 +26,6 @@ mod flags {
     pub fn vv() -> bool {
         VV.load(Ordering::Relaxed)
     }
-}
-
-#[derive(Clap, Debug)]
-struct Opts {
-    /// show verbose message
-    #[clap(short, long)]
-    pub verbose: bool,
-    #[clap(subcommand)]
-    pub action: Action,
-}
-
-#[derive(Clap, Debug)]
-pub enum Action {
-    /// list all drafts.
-    List,
-    /// create a new draft.
-    New { name: String },
-    /// post a draft.
-    Post {
-        name: String,
-        #[clap(short, long)]
-        update: bool,
-    },
 }
 
 pub fn parse_opts() -> anyhow::Result<Action> {
