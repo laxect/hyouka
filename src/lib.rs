@@ -5,8 +5,8 @@ pub use action::take_action;
 pub use config::load_config;
 pub(crate) use config::{target_dir, working_dir};
 pub(crate) use flags::vv;
-pub use print::Check;
 use options::{Action, Opts};
+pub use print::Check;
 
 mod action;
 mod config;
