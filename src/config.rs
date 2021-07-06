@@ -6,7 +6,10 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use crate::{print::*, verbose};
+use crate::{
+    print::{section, Check},
+    verbose,
+};
 
 static TARGET_DIR: SyncOnceCell<PathBuf> = SyncOnceCell::new();
 static WORKING_DIR: SyncOnceCell<PathBuf> = SyncOnceCell::new();
