@@ -1,4 +1,3 @@
-#![feature(once_cell, with_options)]
 use clap::Clap;
 
 pub use action::take_action;

@@ -40,7 +40,7 @@ fn new(mut name: String) -> anyhow::Result<()> {
     name.push_str(".md");
     verbose!("create file {}", &name);
     let path = working_dir.join(name);
-    let mut file = fs::File::with_options()
+    let mut file = fs::OpenOptions::new()
         .create_new(true)
         .write(true)
         .open(path)

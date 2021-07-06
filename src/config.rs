@@ -1,8 +1,8 @@
 use dirs::config_dir;
+use once_cell::sync::OnceCell;
 use serde::Deserialize;
 use std::{
     io::Read,
-    lazy::SyncOnceCell,
     path::{Path, PathBuf},
 };
 
@@ -11,8 +11,8 @@ use crate::{
     verbose,
 };
 
-static TARGET_DIR: SyncOnceCell<PathBuf> = SyncOnceCell::new();
-static WORKING_DIR: SyncOnceCell<PathBuf> = SyncOnceCell::new();
+static TARGET_DIR: OnceCell<PathBuf> = OnceCell::new();
+static WORKING_DIR: OnceCell<PathBuf> = OnceCell::new();
 
 #[derive(Deserialize)]
 pub struct Config {
@@ -42,9 +42,9 @@ pub fn load_config() -> anyhow::Result<()> {
 }
 
 pub(crate) fn target_dir() -> &'static Path {
-    &TARGET_DIR.get().expect("Use before init")
+    TARGET_DIR.get().expect("Use before init")
 }
 
 pub(crate) fn working_dir() -> &'static Path {
-    &WORKING_DIR.get().expect("Use before init")
+    WORKING_DIR.get().expect("Use before init")
 }
