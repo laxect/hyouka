@@ -4,7 +4,7 @@ name: "tagged-release"
 on:
   push:
     tags:
-      - "v*"
+      - "*"
 
 jobs:
   tagged-release:
@@ -12,7 +12,30 @@ jobs:
     runs-on: "ubuntu-latest"
 
     steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          override: true
+      - name: Vendor
+        uses: actions-rs/cargo@v1
+        with:
+          command: vendor
+      - name: Pack
+        id: pack
+        shell: bash
+        run: |
+          TAG=`git describe --tags --abbrev=0`
+          mkdir -p .cargo
+          cp vendor.toml .cargo/config.toml
+          7z a ../hyouka-$TAG.zip
+          cp ../hyouka-$TAG.zip ./
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
+          files: |
+            *.zip
